@@ -1,0 +1,17 @@
+import "proto/common.proto";
+
+extend SanMessage
+{
+    optional GetRandomNameReq GET_RANDOM_NAME_REQ = 1000;
+    optional GetRandomNameRsp GET_RANDOM_NAME_RSP = 1001;
+}
+
+message GetRandomNameReq
+{
+    optional int32 number = 1 [ default = 5 ];
+}
+
+message GetRandomNameRsp
+{
+    repeated string names = 1;
+}

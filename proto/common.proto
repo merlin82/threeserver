@@ -1,0 +1,8 @@
+//cmd 
+// user 1000~2000
+message SanMessage
+{
+    optional string uin = 1;
+    optional int32 cmdid = 2;
+    extensions 1000 to 100000;
+}
