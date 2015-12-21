@@ -6,5 +6,6 @@ cc_library(
     deps = [
         '//public/netmt:netmt',
         '//proto:proto',
+        '#gflags',
     ]
 )
