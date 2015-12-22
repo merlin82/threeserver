@@ -11,8 +11,13 @@ SanUserServer::~SanUserServer()
     
 }
 
-int SanUserServer::Init()
+int SanUserServer::Init(int argc, char**argv)
 {
+    int ret = SanServerBase::Init(argc, argv);
+    if (ret != 0)
+    {
+        return -1;
+    }
     Register(GET_RANDOM_NAME_REQ.number(), boost::bind(&SanUserServer::HandleGetRandomName, this, _1, _2));
     return 0;
 }
@@ -25,9 +30,13 @@ void SanUserServer::HandleGetRandomName(netmt::ConnectionPtr conn, SanMessage& m
 
 int main(int argc, char** argv)
 {
-    daemon(0, 0);
+    //daemon(1, 1);
     SanUserServer s;
-    s.Run("127.0.0.1", "30001", 10);
+    if (0 != s.Init(argc, argv))
+    {
+        return -1;
+    }
+    s.Run();
     return 0;
 }
 

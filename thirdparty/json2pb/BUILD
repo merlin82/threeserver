@@ -4,6 +4,6 @@ cc_library(
         '*.cc',
     ],
     deps = [
-        '#janson',
+        '#jansson',
     ]
 )

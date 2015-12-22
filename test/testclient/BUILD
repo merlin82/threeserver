@@ -1,10 +1,11 @@
 cc_binary(
-    name = 'san_user_svr',
+    name = 'tc',
     srcs = [
         '*.cpp',
     ],
     deps = [
         '//public/base:base',
+        '//thirdparty/json2pb:json2pb',
     ],
-    install_dir = 'deploy/user_svr',
+    install_dir = 'deploy/test_client',
 )

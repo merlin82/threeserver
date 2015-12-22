@@ -14,7 +14,9 @@ public:
     SanServerBase();
     virtual ~SanServerBase();
 public:
-    virtual int Init();
+    virtual int Init(int argc, char**argv);
+
+    void Run();
     
     void Register(int32_t cmdid, CmdFunc func);
 public:    

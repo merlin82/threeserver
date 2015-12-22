@@ -9,7 +9,7 @@ public:
     SanUserServer();
     virtual ~SanUserServer();
 public:
-    virtual int Init();
+    virtual int Init(int argc, char**argv);
     void HandleGetRandomName(netmt::ConnectionPtr conn, SanMessage& msg);
 };
 #endif
