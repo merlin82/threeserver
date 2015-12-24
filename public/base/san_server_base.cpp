@@ -52,18 +52,25 @@ void SanServerBase::Register(int32_t cmdid, CmdFunc func)
 
 void SanServerBase::HandleMessage(ConnectionPtr conn, const MessagePtr msg)
 {
-    SanMessage san_msg;
-    int ret = SanMsgUtil::Decode(msg, san_msg);
-    if (ret != 0)
+    try
     {
-        return;
+        SanMessage san_msg;
+        int ret = SanMsgUtil::Decode(msg, san_msg);
+        if (ret != 0)
+        {
+            return;
+        }
+        std::map<int32_t, CmdFunc>::iterator it = m_cmd_map.find(san_msg.cmdid());
+        if (it == m_cmd_map.end())
+        {
+            return;
+        }
+        (it->second)(conn, san_msg);        
     }
-    std::map<int32_t, CmdFunc>::iterator it = m_cmd_map.find(san_msg.cmdid());
-    if (it == m_cmd_map.end())
+    catch(...)
     {
-        return;
+        LOG(ERROR) << "SanServerBase::HandleMessage, catch exception.";
     }
-    (it->second)(conn, san_msg);
 }
 
 int SanServerBase::CheckComplete(ConnectionPtr conn, const char* data,

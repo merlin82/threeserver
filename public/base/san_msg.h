@@ -24,6 +24,7 @@ public:
     static int CheckComplete(const char* data, std::size_t data_len);
     static void AsyncSend(const std::string& ip, uint16_t port, const SanMessage& san_msg);
     static int SendAndRecv(const std::string& ip, uint16_t port, const SanMessage& req, SanMessage& rsp);
+    static int Response(netmt::ConnectionPtr conn, const SanMessage& san_msg);
 private:
     static netmt::Server *s_server;
 };

@@ -96,4 +96,22 @@ int SanMsgUtil::SendAndRecv(const std::string& ip, uint16_t port, const SanMessa
     }
     return 0;
 }
- 
+
+int SanMsgUtil::Response(netmt::ConnectionPtr conn, const SanMessage& san_msg)
+{
+    MessagePtr raw_msg;
+    int ret = Encode(san_msg, raw_msg);
+    if (ret != 0)
+    {
+        LOG(ERROR) << "SanMsgUtil::Response, Encode failed.";
+        return ret;
+    }
+    ret = conn->AsyncSend(raw_msg);
+    if (ret != 0)
+    {
+        LOG(ERROR) << "SanMsgUtil::Response, AsyncSend failed.";
+        return ret;
+    }    
+    return 0;
+}
+
