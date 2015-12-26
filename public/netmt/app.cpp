@@ -5,18 +5,7 @@
 namespace netmt
 {
 
-App::App() :m_signals(m_io_service), m_acceptor(m_io_service)
-{
-
-}
-
-App::~App()
-{
-
-}
-
-void App::Run(const std::string& address, const std::string& port,
-            std::size_t thread_pool_size)
+App::App() :m_signals(m_io_service), m_acceptor(m_io_service), m_timer(m_io_service)
 {
     // Register to handle the signals that indicate when the App should exit.
     // It is safe to register for the same signal multiple times in a program,
@@ -28,6 +17,20 @@ void App::Run(const std::string& address, const std::string& port,
 #endif // defined(SIGQUIT)
     m_signals.async_wait(boost::bind(&App::HandleStop, this));
 
+    m_timer.expires_from_now(boost::posix_time::milliseconds(1000));
+    m_timer.async_wait(
+            boost::bind(&App::HandleTimeOut, this,
+                    boost::asio::placeholders::error));
+}
+
+App::~App()
+{
+
+}
+
+void App::Run(const std::string& address, const std::string& port,
+            std::size_t thread_pool_size)
+{
     // Open the acceptor with the option to reuse the address (i.e. SO_REUSEADDR).
     boost::asio::ip::tcp::resolver resolver(m_io_service);
     boost::asio::ip::tcp::resolver::query query(address, port);
@@ -48,6 +51,25 @@ void App::Run(const std::string& address, const std::string& port,
     }
 
     m_thread_grp.join_all();
+}
+
+
+
+void App::Run(std::size_t thread_pool_size)
+{
+    for (std::size_t i = 0; i < thread_pool_size; ++i)
+    {
+        m_thread_grp.create_thread(
+                boost::bind(&boost::asio::io_service::run, &m_io_service));
+    }
+
+    m_thread_grp.join_all();    
+}
+
+
+void App::HandleLoop()
+{
+    
 }
 
 void App::StartAccept()
@@ -72,6 +94,15 @@ void App::HandleAccept(const boost::system::error_code& e)
 void App::HandleStop()
 {
     m_io_service.stop();
+}
+
+void App::HandleTimeOut(const boost::system::error_code& error)
+{
+    HandleLoop();
+    m_timer.expires_from_now(boost::posix_time::milliseconds(1000));
+    m_timer.async_wait(
+            boost::bind(&App::HandleTimeOut, this,
+                    boost::asio::placeholders::error));    
 }
 
 void App::HandleConnect(ConnectionPtr conn)
