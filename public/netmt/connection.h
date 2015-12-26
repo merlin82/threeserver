@@ -12,7 +12,7 @@ namespace netmt
 
 const int DEFAULT_BUFFER_LEN = 8192;
 
-class Server;
+class App;
 
 class Connection: public boost::asio::ip::tcp::socket,
         public boost::enable_shared_from_this<Connection>,
@@ -20,7 +20,7 @@ class Connection: public boost::asio::ip::tcp::socket,
 {
 public:
     /// Construct a Connection with the given io_service.
-    explicit Connection(Server* server);
+    explicit Connection(App* app);
     
     virtual ~Connection();
 
@@ -40,7 +40,7 @@ protected:
     /// Handle completion of a send operation.
     void HandleSend(const MessagePtr msg, const boost::system::error_code& e); 
 protected:
-    Server* m_server;
+    App* m_app;
 
     /// Strand to ensure the connection's handlers are not called concurrently.
     boost::asio::io_service::strand m_strand;    

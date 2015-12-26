@@ -3,12 +3,12 @@
 
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
-#include "public/netmt/server.h"
+#include "public/netmt/app.h"
 #include "public/netmt/connection.h"
 #include "san_msg.h"
 typedef boost::function<void (netmt::ConnectionPtr conn, SanMessage& msg)> CmdFunc;
 
-class SanServerBase : public netmt::Server
+class SanServerBase : public netmt::App
 {
 public:
     SanServerBase();

@@ -1,12 +1,12 @@
 #include <boost/bind.hpp>
-#include "server.h"
+#include "app.h"
 #include "connection.h"
 
 namespace netmt
 {
 
-Connection::Connection(Server* server) :
-        boost::asio::ip::tcp::socket(server->io_service()), m_server(server), m_strand(server->io_service())
+Connection::Connection(App* app) :
+        boost::asio::ip::tcp::socket(app->io_service()), m_app(app), m_strand(app->io_service())
 {
     m_buffer = NULL;
     m_buffer_len = DEFAULT_BUFFER_LEN;
@@ -51,12 +51,12 @@ void Connection::HandleRead(const boost::system::error_code& e,
     if (!e)
     {
         m_data_len += bytes_transferred;
-        int ret = m_server->CheckComplete(shared_from_this(), m_data,
+        int ret = m_app->CheckComplete(shared_from_this(), m_data,
                 m_data_len);
         if (ret > 0)
         {
             MessagePtr msg = Message::Alloc(m_data, ret);
-            m_server->HandleMessage(shared_from_this(), msg);
+            m_app->HandleMessage(shared_from_this(), msg);
             m_data += ret;
             m_data_len -= ret;
         }
@@ -85,7 +85,7 @@ void Connection::HandleRead(const boost::system::error_code& e,
     }
     else
     {
-        m_server->HandleDisconnect(shared_from_this());
+        m_app->HandleDisconnect(shared_from_this());
     }
 }
 
@@ -93,7 +93,7 @@ void Connection::HandleSend(const MessagePtr msg, const boost::system::error_cod
 {
     if (e)
     {
-        m_server->HandleSendError(shared_from_this(), msg, e);
+        m_app->HandleSendError(shared_from_this(), msg, e);
     }
 }
 

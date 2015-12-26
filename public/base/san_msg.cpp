@@ -6,7 +6,7 @@
 
 using namespace netmt;
 
-netmt::Server *SanMsgUtil::s_server = NULL;
+netmt::App *SanMsgUtil::s_app = NULL;
 int SanMsgUtil::Decode(const MessagePtr& raw_msg, SanMessage& san_msg)
 {
     if(!san_msg.ParseFromArray(raw_msg->Data() + sizeof(SanMsgHead), 
@@ -58,7 +58,7 @@ int SanMsgUtil::CheckComplete(const char* data, std::size_t data_len)
 
 void SanMsgUtil::AsyncSend(const std::string& ip, uint16_t port, const SanMessage& san_msg)
 {
-    if (NULL == s_server)
+    if (NULL == s_app)
     {
         return;
     }
@@ -67,8 +67,8 @@ void SanMsgUtil::AsyncSend(const std::string& ip, uint16_t port, const SanMessag
     if (ret != 0)
     {
         return;
-    }    
-    ASyncClient::Instance()->Send(s_server, ip, port, raw_msg);
+    }
+    ASyncClient::Instance()->Send(s_app, ip, port, raw_msg);
 }
 
 int SanMsgUtil::SendAndRecv(const std::string& ip, uint16_t port, const SanMessage& req, SanMessage& rsp)

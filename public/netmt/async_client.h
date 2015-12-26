@@ -11,7 +11,7 @@ namespace netmt
 class AsyncConnection: public Connection
 {
 public:
-    explicit AsyncConnection(Server* server, const std::string& ip, uint16_t port);
+    explicit AsyncConnection(App* app, const std::string& ip, uint16_t port);
     
     virtual ~AsyncConnection();
 
@@ -36,9 +36,9 @@ public:
 
     static ASyncClient* Instance();
 
-    int Send(Server* server, const std::string& ip, uint16_t port, const MessagePtr msg);
+    int Send(App* app, const std::string& ip, uint16_t port, const MessagePtr msg);
 private:
-    AsyncConnectionPtr GetConnection(Server* server, const std::string& ip, uint16_t port);
+    AsyncConnectionPtr GetConnection(App* app, const std::string& ip, uint16_t port);
     
 private:
     static ASyncClient s_client;

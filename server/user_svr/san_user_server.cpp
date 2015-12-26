@@ -24,15 +24,16 @@ int SanUserServer::Init(int argc, char**argv)
 
 void SanUserServer::HandleGetRandomName(netmt::ConnectionPtr conn, SanMessage& msg)
 {
-    const GetRandomNameReq& req = msg.GetExtension(GET_RANDOM_NAME_REQ);
+    //const GetRandomNameReq& req = msg.GetExtension(GET_RANDOM_NAME_REQ);
     SanMessage rsp;
     rsp.set_cmdid(GET_RANDOM_NAME_RSP.number());
-    rsp.set_uin("xxxxxxxxxx");
-    GetRandomNameRsp* get_rsp = rsp.MutableExtension(GET_RANDOM_NAME_RSP);
-    for(int i = 0; i < req.number(); ++i)
-    {
-        get_rsp->add_names("aaaa");
-    }
+    rsp.set_uin(msg.uin());
+    GetRandomNameRsp* name_rsp = rsp.MutableExtension(GET_RANDOM_NAME_RSP);
+    //for(int i = 0; i < req.number(); ++i)
+    //{
+    //    get_rsp->add_names("aaaa");
+    //}
+    name_rsp->set_name("abc");
     SanMsgUtil::Response(conn, rsp);
 }
 

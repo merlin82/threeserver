@@ -1,5 +1,5 @@
-#ifndef _NETMT_SERVER_H_
-#define _NETMT_SERVER_H_
+#ifndef _NETMT_APP_H_
+#define _NETMT_APP_H_
 
 #include <string>
 #include <boost/thread.hpp>
@@ -7,12 +7,12 @@
 
 namespace netmt
 {
-class Server: private boost::noncopyable
+class App: private boost::noncopyable
 {
 public:
-    Server();
+    App();
 
-    virtual ~Server();
+    virtual ~App();
 
     /// Run the server to listen on the specified TCP address and port.
     void Run(const std::string& address, const std::string& port,

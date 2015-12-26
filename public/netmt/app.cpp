@@ -1,24 +1,24 @@
-#include "server.h"
+#include "app.h"
 #include <boost/thread/thread.hpp>
 #include <boost/bind.hpp>
 
 namespace netmt
 {
 
-Server::Server() :m_signals(m_io_service), m_acceptor(m_io_service)
+App::App() :m_signals(m_io_service), m_acceptor(m_io_service)
 {
 
 }
 
-Server::~Server()
+App::~App()
 {
 
 }
 
-void Server::Run(const std::string& address, const std::string& port,
+void App::Run(const std::string& address, const std::string& port,
             std::size_t thread_pool_size)
 {
-    // Register to handle the signals that indicate when the Server should exit.
+    // Register to handle the signals that indicate when the App should exit.
     // It is safe to register for the same signal multiple times in a program,
     // provided all registration for the specified signal is made through Asio.
     m_signals.add(SIGINT);
@@ -26,7 +26,7 @@ void Server::Run(const std::string& address, const std::string& port,
 #if defined(SIGQUIT)
     m_signals.add(SIGQUIT);
 #endif // defined(SIGQUIT)
-    m_signals.async_wait(boost::bind(&Server::HandleStop, this));
+    m_signals.async_wait(boost::bind(&App::HandleStop, this));
 
     // Open the acceptor with the option to reuse the address (i.e. SO_REUSEADDR).
     boost::asio::ip::tcp::resolver resolver(m_io_service);
@@ -50,15 +50,15 @@ void Server::Run(const std::string& address, const std::string& port,
     m_thread_grp.join_all();
 }
 
-void Server::StartAccept()
+void App::StartAccept()
 {
     m_new_connection.reset(new Connection(this));
     m_acceptor.async_accept(*m_new_connection,
-            boost::bind(&Server::HandleAccept, this,
+            boost::bind(&App::HandleAccept, this,
                     boost::asio::placeholders::error));
 }
 
-void Server::HandleAccept(const boost::system::error_code& e)
+void App::HandleAccept(const boost::system::error_code& e)
 {
     if (!e)
     {
@@ -69,22 +69,22 @@ void Server::HandleAccept(const boost::system::error_code& e)
     StartAccept();
 }
 
-void Server::HandleStop()
+void App::HandleStop()
 {
     m_io_service.stop();
 }
 
-void Server::HandleConnect(ConnectionPtr conn)
+void App::HandleConnect(ConnectionPtr conn)
 {
 
 }
 
-void Server::HandleDisconnect(ConnectionPtr conn)
+void App::HandleDisconnect(ConnectionPtr conn)
 {
 
 }
 
-void Server::HandleSendError(ConnectionPtr conn, const MessagePtr msg,
+void App::HandleSendError(ConnectionPtr conn, const MessagePtr msg,
         const boost::system::error_code& e)
 {
 

@@ -2,7 +2,7 @@
 #define _SAN_MSG_
 #include <stdint.h>
 #include "public/netmt/message.h"
-#include "public/netmt/server.h"
+#include "public/netmt/app.h"
 #include "proto/common.pb.h"
 
 const char SAN_MAGIC = 0xFE;
@@ -18,7 +18,7 @@ struct SanMsgHead
 class SanMsgUtil
 {
 public:
-    static void SetServer(netmt::Server* server) {s_server = server;}
+    static void SetApp(netmt::App* app) {s_app = app;}
     static int Decode(const netmt::MessagePtr& raw_msg, SanMessage& san_msg);
     static int Encode(const SanMessage& san_msg, netmt::MessagePtr& raw_msg);
     static int CheckComplete(const char* data, std::size_t data_len);
@@ -26,7 +26,7 @@ public:
     static int SendAndRecv(const std::string& ip, uint16_t port, const SanMessage& req, SanMessage& rsp);
     static int Response(netmt::ConnectionPtr conn, const SanMessage& san_msg);
 private:
-    static netmt::Server *s_server;
+    static netmt::App *s_app;
 };
 #endif
 

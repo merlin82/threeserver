@@ -8,10 +8,10 @@ extend SanMessage
 
 message GetRandomNameReq
 {
-    optional int32 number = 1 [ default = 5 ];
+
 }
 
 message GetRandomNameRsp
 {
-    repeated string names = 1;
+    optional string name = 1;
 }

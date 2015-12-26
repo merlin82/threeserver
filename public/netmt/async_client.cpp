@@ -1,11 +1,11 @@
 #include "async_client.h"
-#include "server.h"
+#include "app.h"
 
 using namespace std;
 namespace netmt
 {
 
-AsyncConnection::AsyncConnection(Server* server, const std::string& ip, uint16_t port) : Connection(server), m_ip(ip), m_port(port)
+AsyncConnection::AsyncConnection(App* app, const std::string& ip, uint16_t port) : Connection(app), m_ip(ip), m_port(port)
 {
     
 }
@@ -35,7 +35,7 @@ void AsyncConnection::HandleConnect(const MessagePtr msg, const boost::system::e
 {
     if (!e)
     {
-        m_server->HandleConnect(Connection::shared_from_this());
+        m_app->HandleConnect(Connection::shared_from_this());
         Start();
         async_send(boost::asio::buffer(msg->Data(), msg->Length()),
                 m_strand.wrap(boost::bind(&AsyncConnection::HandleSend, this,
@@ -55,7 +55,7 @@ void AsyncConnection::HandleSend(const MessagePtr msg, const boost::system::erro
         }
         else
         {
-            m_server->HandleSendError(Connection::shared_from_this(), msg, e);
+            m_app->HandleSendError(Connection::shared_from_this(), msg, e);
         }
     }
 }
@@ -74,14 +74,14 @@ ASyncClient::~ASyncClient()
     
 }
 
-int ASyncClient::Send(Server* server, const std::string& ip, uint16_t port, const MessagePtr msg)
+int ASyncClient::Send(App* app, const std::string& ip, uint16_t port, const MessagePtr msg)
 {
-    AsyncConnectionPtr conn = GetConnection(server, ip, port);
+    AsyncConnectionPtr conn = GetConnection(app, ip, port);
     conn->Send(msg);
     return 0;    
 }
 
-AsyncConnectionPtr ASyncClient::GetConnection(Server* server, const std::string& ip, uint16_t port)
+AsyncConnectionPtr ASyncClient::GetConnection(App* app, const std::string& ip, uint16_t port)
 {
     boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address::from_string(ip), port);
     AsyncConnectionPtr conn;
@@ -89,7 +89,7 @@ AsyncConnectionPtr ASyncClient::GetConnection(Server* server, const std::string&
     map<boost::asio::ip::tcp::endpoint, AsyncConnectionPtr>::iterator it = m_conn_map.find(endpoint);
     if (it == m_conn_map.end())
     {
-        conn.reset(new AsyncConnection(server, ip, port));
+        conn.reset(new AsyncConnection(app, ip, port));
         m_conn_map[endpoint] = conn;       
     }
     else

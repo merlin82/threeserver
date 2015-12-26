@@ -6,7 +6,7 @@ using namespace netmt;
 
 SanServerBase::SanServerBase()
 {
-    SanMsgUtil::SetServer(this);
+    SanMsgUtil::SetApp(this);
 }
 
 SanServerBase::~SanServerBase()
@@ -36,7 +36,7 @@ void SanServerBase::Run()
     LOG(INFO) << "start server: " << GFLAGS_NAMESPACE::GetArgv0();
     try
     {
-        Server::Run(FLAGS_listen_ip, FLAGS_listen_port, FLAGS_thread_pool_size);
+        App::Run(FLAGS_listen_ip, FLAGS_listen_port, FLAGS_thread_pool_size);
     }
     catch(...)
     {
