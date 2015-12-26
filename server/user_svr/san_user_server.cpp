@@ -13,7 +13,7 @@ SanUserServer::~SanUserServer()
 
 int SanUserServer::Init(int argc, char**argv)
 {
-    int ret = SanServerBase::Init(argc, argv);
+    int ret = SanAppBase::Init(argc, argv);
     if (ret != 0)
     {
         return -1;

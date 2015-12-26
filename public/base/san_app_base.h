@@ -1,5 +1,5 @@
-#ifndef _SAN_SERVER_BASE_
-#define _SAN_SERVER_BASE_
+#ifndef _SAN_APP_BASE_
+#define _SAN_APP_BASE_
 
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
@@ -8,11 +8,11 @@
 #include "san_msg.h"
 typedef boost::function<void (netmt::ConnectionPtr conn, SanMessage& msg)> CmdFunc;
 
-class SanServerBase : public netmt::App
+class SanAppBase : public netmt::App
 {
 public:
-    SanServerBase();
-    virtual ~SanServerBase();
+    SanAppBase();
+    virtual ~SanAppBase();
 public:
     virtual int Init(int argc, char**argv);
 
@@ -28,6 +28,8 @@ public:
     virtual int CheckComplete(netmt::ConnectionPtr conn, const char* data,
             std::size_t data_len);
 
+    virtual void HandleLoop();
+    
     /// handle connect event
     virtual void HandleConnect(netmt::ConnectionPtr conn);
 

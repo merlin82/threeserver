@@ -1,9 +1,9 @@
 #ifndef _SAN_USER_SERVER_
 #define _SAN_USER_SERVER_
 
-#include "public/base/san_server_base.h"
+#include "public/base/san_app_base.h"
 
-class SanUserServer : public SanServerBase
+class SanUserServer : public SanAppBase
 {
 public:
     SanUserServer();

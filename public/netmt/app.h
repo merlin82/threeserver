@@ -53,7 +53,7 @@ private:
     /// Handle completion of an asynchronous accept operation.
     void HandleAccept(const boost::system::error_code& e);
 
-    /// Handle a request to stop the server.
+    /// Handle a request to stop the app.
     void HandleStop();
 
     void HandleTimeOut(const boost::system::error_code& error);

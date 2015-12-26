@@ -1,19 +1,19 @@
-#include "san_server_base.h"
+#include "san_app_base.h"
 #include "config.h"
 #include <iostream>
 using namespace std;
 using namespace netmt;
 
-SanServerBase::SanServerBase()
+SanAppBase::SanAppBase()
 {
     SanMsgUtil::SetApp(this);
 }
 
-SanServerBase::~SanServerBase()
+SanAppBase::~SanAppBase()
 {
 }
 
-int SanServerBase::Init(int argc, char**argv)
+int SanAppBase::Init(int argc, char**argv)
 {
     if (argc != 2)
     {
@@ -31,26 +31,33 @@ int SanServerBase::Init(int argc, char**argv)
     return 0;
 }
 
-void SanServerBase::Run()
+void SanAppBase::Run()
 {
-    LOG(INFO) << "start server: " << GFLAGS_NAMESPACE::GetArgv0();
+    LOG(INFO) << "start app: " << GFLAGS_NAMESPACE::GetArgv0();
     try
     {
-        App::Run(FLAGS_listen_ip, FLAGS_listen_port, FLAGS_thread_pool_size);
+        if (FLAGS_listen_ip.empty())
+        {
+            App::Run(FLAGS_thread_pool_size);
+        }
+        else
+        {
+            App::Run(FLAGS_listen_ip, FLAGS_listen_port, FLAGS_thread_pool_size);            
+        }
     }
     catch(...)
     {
         LOG(ERROR) << "catch exception";
     }
-    LOG(INFO) << "stop server: " << GFLAGS_NAMESPACE::GetArgv0();
+    LOG(INFO) << "stop app: " << GFLAGS_NAMESPACE::GetArgv0();
 }
 
-void SanServerBase::Register(int32_t cmdid, CmdFunc func)
+void SanAppBase::Register(int32_t cmdid, CmdFunc func)
 {
     m_cmd_map[cmdid] = func;
 }
 
-void SanServerBase::HandleMessage(ConnectionPtr conn, const MessagePtr msg)
+void SanAppBase::HandleMessage(ConnectionPtr conn, const MessagePtr msg)
 {
     try
     {
@@ -69,28 +76,33 @@ void SanServerBase::HandleMessage(ConnectionPtr conn, const MessagePtr msg)
     }
     catch(...)
     {
-        LOG(ERROR) << "SanServerBase::HandleMessage, catch exception.";
+        LOG(ERROR) << "SanAppBase::HandleMessage, catch exception.";
     }
 }
 
-int SanServerBase::CheckComplete(ConnectionPtr conn, const char* data,
+int SanAppBase::CheckComplete(ConnectionPtr conn, const char* data,
         std::size_t data_len)
 {
     return SanMsgUtil::CheckComplete(data, data_len);
 }
 
-void SanServerBase::HandleConnect(ConnectionPtr conn)
+void SanAppBase::HandleLoop()
 {
-    LOG(INFO) << conn->remote_endpoint() << " connect" << endl;
+    
 }
 
-void SanServerBase::HandleDisconnect(ConnectionPtr conn)
+void SanAppBase::HandleConnect(ConnectionPtr conn)
 {
-    LOG(INFO) << conn->remote_endpoint() << " disconnect"  << endl;
+    LOG(INFO) << conn->remote_endpoint() << " connect";
 }
 
-void SanServerBase::HandleSendError(ConnectionPtr conn, const MessagePtr msg, const boost::system::error_code& e)
+void SanAppBase::HandleDisconnect(ConnectionPtr conn)
 {
-    LOG(INFO) << conn->remote_endpoint() << " send error"  << endl;
+    LOG(INFO) << conn->remote_endpoint() << " disconnect";
+}
+
+void SanAppBase::HandleSendError(ConnectionPtr conn, const MessagePtr msg, const boost::system::error_code& e)
+{
+    LOG(INFO) << conn->remote_endpoint() << " send error";
 }
 
